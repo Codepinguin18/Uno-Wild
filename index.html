@@ -1,69 +1,334 @@
 <!DOCTYPE html>
 <html lang="de">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Cyber-Uno: Origins</title>
-    <link rel="stylesheet" href="style.css">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>UltraUNO</title>
+  <link rel="stylesheet" href="css/style.css" />
 </head>
 <body>
-    <div id="app">
-        <!-- Login Screen -->
-        <div id="auth-screen" class="screen">
-            <h1>CYBER-UNO</h1>
-            <input type="text" id="username" placeholder="Nutzername">
-            <button onclick="game.login()">Account Erstellen / Login</button>
-        </div>
+<div id="app">
 
-        <!-- Main Menu -->
-        <div id="main-menu" class="screen hidden">
-            <div class="stats">
-                <span>🏆 <span id="trophies">0</span></span>
-                <span>💎 <span id="diamonds">0</span></span>
-            </div>
-            <nav>
-                <button onclick="game.switchScreen('game-board')">Suchen (Play)</button>
-                <button onclick="game.switchScreen('deck-screen')">Deck & Karten</button>
-                <button onclick="game.switchScreen('shop-screen')">Shop (Lootboxen)</button>
-                <button onclick="game.switchScreen('leaderboard-screen')">Leaderboard</button>
-            </nav>
-        </div>
-
-        <!-- Shop / Lootboxen -->
-        <div id="shop-screen" class="screen hidden">
-            <button class="back-btn" onclick="game.switchScreen('main-menu')">Zurück</button>
-            <h2>Lootbox Shop</h2>
-            <div id="lootbox-list">
-                <!-- Wird per JS gefüllt -->
-            </div>
-        </div>
-
-        <!-- Deck Builder -->
-        <div id="deck-screen" class="screen hidden">
-            <button class="back-btn" onclick="game.switchScreen('main-menu')">Zurück</button>
-            <h2>Dein Deck (<span id="deck-count">0</span>/32)</h2>
-            <div id="collection-grid"></div>
-        </div>
-
-        <!-- Game Board -->
-        <div id="game-board" class="screen hidden">
-            <div id="opponent-hand" class="hand"></div>
-            <div id="center-pile">
-                <div id="discard-pile"></div>
-                <div id="draw-deck" onclick="game.drawCard()">STAPEL</div>
-            </div>
-            <div id="player-upgrades"></div>
-            <div id="player-hand" class="hand"></div>
-            <div id="game-info">Warte auf Gegner...</div>
-        </div>
-
-        <!-- Leaderboard -->
-        <div id="leaderboard-screen" class="screen hidden">
-            <button class="back-btn" onclick="game.switchScreen('main-menu')">Zurück</button>
-            <h2>Top Spieler</h2>
-            <div id="leaderboard-list"></div>
-        </div>
+  <!-- ══════════════════════════════════ AUTH ══ -->
+  <div id="screen-auth" class="screen">
+    <div class="auth-box">
+      <div class="auth-logo">UltraUNO</div>
+      <div class="auth-sub">Sammle · Baue · Siege</div>
+      <input id="auth-username" class="input" type="text" placeholder="Nutzername" autocomplete="username" />
+      <input id="auth-password" class="input" type="password" placeholder="Passwort" autocomplete="current-password" />
+      <div id="auth-error" class="auth-err"></div>
+      <div class="auth-row">
+        <button id="auth-login-btn" class="btn btn-cyan">Anmelden</button>
+        <button id="auth-register-btn" class="btn btn-gold">Registrieren</button>
+      </div>
     </div>
-    <script src="script.js"></script>
+  </div>
+
+  <!-- ══════════════════════════════════ MENU ══ -->
+  <div id="screen-menu" class="screen">
+    <div class="screen-inner">
+      <!-- Header bar -->
+      <div class="menu-header">
+        <div class="menu-avatar-circle" id="menu-avatar">🃏</div>
+        <div class="menu-info">
+          <h2 id="menu-username">Spieler</h2>
+          <div class="menu-stats">
+            <div class="menu-stat">💎 <span id="menu-diamonds">0</span></div>
+            <div class="menu-stat">🏆 <span id="menu-trophies">0</span> Trophäen</div>
+            <div class="menu-stat">✅ <span id="menu-wins">0</span> Siege</div>
+            <div class="menu-stat">❌ <span id="menu-losses">0</span> Niederlagen</div>
+          </div>
+        </div>
+        <button id="menu-logout-btn" class="btn btn-outline">Abmelden</button>
+      </div>
+
+      <!-- Logo -->
+      <div class="menu-logo-big">UltraUNO</div>
+
+      <!-- Nav grid -->
+      <div class="menu-grid">
+        <div class="menu-card menu-play-card" id="menu-play-btn">
+          <div class="icon">🎮</div>
+          <div class="label">Spielen</div>
+        </div>
+        <div class="menu-card" id="menu-collection-btn">
+          <div class="icon">📚</div>
+          <div class="label">Sammlung</div>
+        </div>
+        <div class="menu-card" id="menu-deck-btn">
+          <div class="icon">🃏</div>
+          <div class="label">Deck</div>
+        </div>
+        <div class="menu-card" id="menu-shop-btn">
+          <div class="icon">💎</div>
+          <div class="label">Shop</div>
+        </div>
+        <div class="menu-card" id="menu-cosm-btn">
+          <div class="icon">✨</div>
+          <div class="label">Kosmetik</div>
+        </div>
+        <div class="menu-card" id="menu-lb-btn">
+          <div class="icon">🏅</div>
+          <div class="label">Bestenliste</div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ COLLECTION ══ -->
+  <div id="screen-collection" class="screen">
+    <div class="screen-inner">
+      <div class="screen-header">
+        <div class="screen-title">📚 Sammlung</div>
+        <div id="coll-count" class="coll-count"></div>
+        <div class="screen-header-right">
+          <button id="coll-back-btn" class="btn btn-outline">← Menü</button>
+        </div>
+      </div>
+      <div class="filters">
+        <select id="coll-filter-rarity" class="input">
+          <option value="all">Alle Seltenheiten</option>
+          <option value="common">Common</option>
+          <option value="uncommon">Uncommon</option>
+          <option value="rare">Rare</option>
+          <option value="epic">Epic</option>
+          <option value="legendary">Legendary</option>
+          <option value="mythic">Mythic</option>
+        </select>
+        <select id="coll-filter-color" class="input">
+          <option value="all">Alle Farben</option>
+          <option value="red">Rot</option>
+          <option value="green">Grün</option>
+          <option value="blue">Blau</option>
+          <option value="yellow">Gelb</option>
+          <option value="gray">Grau / Wild</option>
+          <option value="black">Schwarz</option>
+        </select>
+        <input id="coll-search" class="input" type="text" placeholder="Suchen…" style="min-width:160px" />
+      </div>
+      <div id="coll-grid" class="card-grid"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ DECK BUILDER ══ -->
+  <div id="screen-deck" class="screen">
+    <div class="screen-inner" style="display:flex;flex-direction:column;height:100%">
+      <div class="screen-header">
+        <div class="screen-title">🃏 Deck-Builder</div>
+        <div class="screen-header-right">
+          <button id="deck-save-btn" class="btn btn-gold">💾 Speichern</button>
+          <button id="deck-back-btn" class="btn btn-outline">← Menü</button>
+        </div>
+      </div>
+
+      <!-- Cards -->
+      <div class="deck-layout" style="flex:1">
+        <div class="deck-panel">
+          <div class="deck-panel-header">
+            Meine Karten
+          </div>
+          <div id="deck-pool" class="deck-panel-scroll"></div>
+        </div>
+        <div class="deck-panel">
+          <div class="deck-panel-header">
+            Deck <span id="deck-count" style="color:var(--text2);font-size:1rem">0/32</span>
+          </div>
+          <div id="deck-slots" class="deck-panel-scroll"></div>
+        </div>
+      </div>
+
+      <!-- Upgrades -->
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:1rem;max-height:240px;margin-top:0.8rem">
+        <div class="deck-panel">
+          <div class="deck-panel-header" style="font-size:1rem">Meine Upgrades</div>
+          <div id="upgrade-pool" class="deck-panel-scroll upgrade-grid"></div>
+        </div>
+        <div class="deck-panel">
+          <div class="deck-panel-header" style="font-size:1rem">Upgrade-Slots (max 3)</div>
+          <div id="upgrade-slots" class="deck-panel-scroll upgrade-grid"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ SHOP ══ -->
+  <div id="screen-shop" class="screen">
+    <div class="screen-inner">
+      <div class="screen-header">
+        <div class="screen-title">💎 Shop</div>
+        <div class="shop-header-info">💎 <strong id="shop-diamonds">0</strong></div>
+        <div class="screen-header-right">
+          <button id="shop-back-btn" class="btn btn-outline">← Menü</button>
+        </div>
+      </div>
+      <div id="shop-grid" class="lootbox-grid"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ LOOTBOX OPEN ══ -->
+  <div id="screen-lootbox-open" class="screen">
+    <div class="lootbox-reveal-title">✨ Karten erhalten!</div>
+    <div id="lootbox-reveal"></div>
+    <button id="lootbox-claim-btn" class="btn btn-gold" style="display:none;font-size:1.1rem;padding:0.7em 2em">
+      Einsammeln →
+    </button>
+  </div>
+
+  <!-- ══════════════════════════════ COSMETICS ══ -->
+  <div id="screen-cosmetics" class="screen">
+    <div class="screen-inner">
+      <div class="screen-header">
+        <div class="screen-title">✨ Kosmetik</div>
+        <div class="screen-header-right">
+          <button id="cosm-back-btn" class="btn btn-outline">← Menü</button>
+        </div>
+      </div>
+      <div class="cosm-diamonds-info">💎 <strong id="cosm-diamonds">0</strong> Diamanten</div>
+      <div class="cosm-tabs">
+        <div class="cosm-tab active" data-section="cardbacks">🃏 Kartenrückseiten</div>
+        <div class="cosm-tab" data-section="avatars">👤 Avatare</div>
+        <div class="cosm-tab" data-section="tables">🎯 Tische</div>
+        <div class="cosm-tab" data-section="wins">🎉 Sieganimationen</div>
+      </div>
+      <div id="cosm-cardbacks" class="cosm-section active"></div>
+      <div id="cosm-avatars"   class="cosm-section"></div>
+      <div id="cosm-tables"    class="cosm-section"></div>
+      <div id="cosm-wins"      class="cosm-section"></div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════ LEADERBOARD ══ -->
+  <div id="screen-leaderboard" class="screen">
+    <div class="screen-inner">
+      <div class="screen-header">
+        <div class="screen-title">🏅 Bestenliste</div>
+        <div class="screen-header-right">
+          <button id="lb-back-btn" class="btn btn-outline">← Menü</button>
+        </div>
+      </div>
+      <div class="lb-table-wrap">
+        <table class="lb-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Spieler</th>
+              <th>🏆 Trophäen</th>
+              <th>✅ Siege</th>
+              <th>❌ Niederlagen</th>
+            </tr>
+          </thead>
+          <tbody id="lb-body"></tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+
+  <!-- ══════════════════════════════════ GAME ══ -->
+  <div id="screen-game" class="screen">
+
+    <!-- Top bar -->
+    <div class="game-topbar">
+      <div class="game-topbar-title">UltraUNO</div>
+      <div id="g-turn" class="turn-indicator"></div>
+      <div id="g-phase" style="color:var(--cyan);font-weight:700;font-size:0.85rem"></div>
+      <div id="g-upgrades" style="display:flex;gap:0.4rem;flex-wrap:wrap"></div>
+      <button id="g-back-btn" class="btn btn-outline" style="margin-left:auto">✕ Aufgeben</button>
+    </div>
+
+    <div class="game-field">
+
+      <!-- AI hand -->
+      <div class="ai-zone">
+        <div class="ai-label">KI</div>
+        <div class="ai-count-badge"><span id="g-ai-count">7</span> Karten</div>
+        <div id="g-ai-hand"></div>
+      </div>
+
+      <!-- Center: discard, draw, info -->
+      <div class="center-zone">
+        <div class="discard-area">
+          <div class="pile-label">Ablagestapel</div>
+          <div id="g-discard"></div>
+        </div>
+
+        <div class="game-info-col">
+          <div id="g-color" class="color-indicator" style="background:#333">–</div>
+          <div class="status-badges">
+            <div id="g-shield" class="status-badge"></div>
+            <div id="g-poison" class="status-badge"></div>
+            <div id="g-frozen" class="status-badge"></div>
+            <div id="g-null"   class="status-badge"></div>
+          </div>
+        </div>
+
+        <div class="draw-area">
+          <div class="pile-label">Ziehstapel</div>
+          <div class="draw-pile-visual" id="g-draw-btn">
+            <span>🂠</span>
+            <span class="draw-count" id="g-draw-count">?</span>
+            <span style="font-size:0.65rem">Ziehen</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Player hand -->
+      <div class="player-zone">
+        <div class="player-zone-header">
+          <div class="player-hand-label">Deine Hand</div>
+        </div>
+        <div id="g-player-hand"></div>
+      </div>
+
+      <!-- Game log -->
+      <div class="game-log-wrap">
+        <div id="game-log"></div>
+      </div>
+
+    </div><!-- /game-field -->
+
+    <!-- Color picker overlay -->
+    <div id="g-color-picker" class="color-picker">
+      <div style="color:#fff;font-family:'Bebas Neue',sans-serif;font-size:1.6rem;width:100%;text-align:center">
+        Farbe wählen
+      </div>
+      <button id="pick-red"    class="color-btn">Rot</button>
+      <button id="pick-green"  class="color-btn">Grün</button>
+      <button id="pick-blue"   class="color-btn">Blau</button>
+      <button id="pick-yellow" class="color-btn">Gelb</button>
+    </div>
+
+    <!-- End game overlay -->
+    <div id="g-end-overlay" class="end-overlay">
+      <div id="g-end-title">Sieg!</div>
+      <div id="g-end-sub"></div>
+      <div class="end-btns">
+        <button id="g-end-rematch-btn" class="btn btn-gold" style="font-size:1.1rem;padding:0.7em 2em">🔄 Nochmal</button>
+        <button id="g-end-back-btn"   class="btn btn-outline" style="font-size:1.1rem;padding:0.7em 2em">← Menü</button>
+      </div>
+    </div>
+
+  </div><!-- /screen-game -->
+
+</div><!-- /app -->
+
+<!-- Toast container -->
+<div id="toast-container"></div>
+
+<script src="js/data.js"></script>
+<script src="js/engine.js"></script>
+<script src="js/app.js"></script>
+
+<script>
+// ── Cosmetics tab switcher (inline, no dependency) ──────────
+document.querySelectorAll('.cosm-tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.cosm-tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.cosm-section').forEach(s => s.classList.remove('active'));
+    tab.classList.add('active');
+    const target = tab.dataset.section;
+    document.getElementById(`cosm-${target}`)?.classList.add('active');
+  });
+});
+</script>
 </body>
 </html>
