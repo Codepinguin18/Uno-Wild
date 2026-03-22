@@ -1,103 +1,689 @@
+/* ============================================================
+   UltraUNO — style.css
+   Dark cyberpunk/gaming aesthetic
+   Fonts: Bebas Neue (headings), Exo 2 (body)
+   ============================================================ */
+
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Exo+2:wght@300;400;500;600;700;900&display=swap');
+
+/* ── Variables ─────────────────────────────────────────────── */
 :root {
-    --bg: #1a1a2e;
-    --card-red: #e94560;
-    --card-blue: #0f3460;
-    --card-green: #2ecc71;
-    --card-yellow: #f1c40f;
-    --card-black: #000000;
-    --card-grey: #95a5a6;
+  --bg:         #07080f;
+  --bg2:        #0d0f1e;
+  --bg3:        #141729;
+  --panel:      #1a1d35;
+  --panel2:     #20243e;
+  --border:     #2a2f55;
+  --gold:       #ffd700;
+  --gold2:      #ffaa00;
+  --cyan:       #00d4ff;
+  --cyan2:      #0099cc;
+  --red:        #e74c3c;
+  --green:      #2ecc71;
+  --purple:     #9b59b6;
+  --text:       #e8eaf6;
+  --text2:      #8b93c4;
+  --text3:      #555e99;
+
+  --r-common:   #888888;
+  --r-uncommon: #2ecc71;
+  --r-rare:     #3498db;
+  --r-epic:     #9b59b6;
+  --r-legendary:#e67e22;
+  --r-mythic:   #ffd700;
 }
 
-body {
-    background-color: var(--bg);
-    color: white;
-    font-family: 'Segoe UI', sans-serif;
-    margin: 0;
-    overflow: hidden;
+/* ── Reset ─────────────────────────────────────────────────── */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+  height: 100%;
+  font-family: 'Exo 2', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  overflow: hidden;
 }
 
+/* Grid background */
+body::before {
+  content: '';
+  position: fixed; inset: 0;
+  background-image:
+    linear-gradient(rgba(0,212,255,0.03) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(0,212,255,0.03) 1px, transparent 1px);
+  background-size: 40px 40px;
+  pointer-events: none;
+  z-index: 0;
+}
+
+#app { position: relative; height: 100vh; z-index: 1; }
+
+/* ── Screen system ─────────────────────────────────────────── */
 .screen {
-    width: 100vw;
-    height: 100vh;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
-    box-sizing: border-box;
+  display: none;
+  position: absolute;
+  inset: 0;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.screen.active { display: flex; flex-direction: column; }
+
+/* ── Typography ────────────────────────────────────────────── */
+h1, h2, h3, .logo { font-family: 'Bebas Neue', sans-serif; letter-spacing: 0.05em; }
+h1 { font-size: clamp(2rem, 5vw, 4rem); }
+h2 { font-size: clamp(1.4rem, 3vw, 2.4rem); }
+
+/* ── Buttons ───────────────────────────────────────────────── */
+.btn {
+  display: inline-flex;
+  align-items: center; justify-content: center;
+  padding: 0.55em 1.3em;
+  border: none; border-radius: 6px;
+  font-family: 'Exo 2', sans-serif;
+  font-weight: 700; font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.btn:hover { transform: translateY(-2px); filter: brightness(1.15); }
+.btn:active { transform: translateY(0); }
+
+.btn-gold    { background: linear-gradient(135deg, var(--gold), var(--gold2)); color: #1a1000; }
+.btn-cyan    { background: linear-gradient(135deg, var(--cyan), var(--cyan2)); color: #001a22; }
+.btn-outline { background: transparent; border: 2px solid var(--border); color: var(--text2); }
+.btn-outline:hover { border-color: var(--cyan); color: var(--cyan); }
+.btn-red     { background: var(--red); color: #fff; }
+.btn-equip   { background: var(--green); color: #001a0f; }
+.btn-equipped{ background: var(--text3); color: #fff; cursor: default; }
+.btn-equipped:hover { transform: none; filter: none; }
+.btn-buy     { background: var(--panel2); border: 1px solid var(--gold); color: var(--gold); }
+.btn-upgrade { background: linear-gradient(135deg, #4a0080, #7b00d4); color: #fff; font-size: 0.8rem; padding: 0.4em 0.8em; }
+.btn-upgrade.used { opacity: 0.4; cursor: not-allowed; }
+.btn-upgrade.used:hover { transform: none; filter: none; }
+
+/* ── Input fields ──────────────────────────────────────────── */
+.input {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  color: var(--text);
+  padding: 0.6em 0.9em;
+  font-family: 'Exo 2', sans-serif;
+  font-size: 0.95rem;
+  outline: none;
+  transition: border-color 0.2s;
+  width: 100%;
+}
+.input:focus { border-color: var(--cyan); box-shadow: 0 0 0 2px rgba(0,212,255,0.15); }
+select.input { cursor: pointer; }
+
+/* ── ─────────────────────────── AUTH SCREEN ──────────────── */
+#screen-auth {
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
 }
 
-.hidden { display: none !important; }
-
-/* Karten Design */
-.card {
-    width: 80px;
-    height: 120px;
-    border-radius: 8px;
-    border: 2px solid white;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    font-weight: bold;
-    font-size: 24px;
-    margin: 5px;
-    cursor: pointer;
-    position: relative;
-    user-select: none;
+.auth-box {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 2.5rem 2.8rem;
+  width: min(420px, 92vw);
+  box-shadow: 0 0 60px rgba(0,212,255,0.08);
+  display: flex; flex-direction: column; gap: 1.2rem;
 }
 
-.card.red { background: var(--card-red); }
-.card.blue { background: var(--card-blue); }
-.card.green { background: var(--card-green); }
-.card.yellow { background: var(--card-yellow); }
-.card.grey { background: var(--card-grey); }
-.card.black { background: var(--card-black); border-color: gold; }
+.auth-logo {
+  text-align: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 3.5rem;
+  line-height: 1;
+  background: linear-gradient(135deg, var(--gold), var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  text-shadow: none;
+  letter-spacing: 0.08em;
+}
+.auth-sub { text-align: center; color: var(--text3); font-size: 0.85rem; margin-top: -0.8rem; }
+.auth-err { color: var(--red); font-size: 0.85rem; min-height: 1em; text-align: center; }
+.auth-row { display: flex; gap: 0.7rem; }
+.auth-row .btn { flex: 1; }
 
-/* Layouts */
-#collection-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, 100px);
-    gap: 10px;
-    overflow-y: auto;
-    width: 90%;
+/* ── ─────────────────────────── MENU SCREEN ──────────────── */
+#screen-menu {
+  padding: 1.5rem;
+  align-items: center;
+  gap: 1.5rem;
 }
 
-.hand {
-    display: flex;
-    justify-content: center;
-    position: absolute;
-    width: 100%;
+.menu-header {
+  width: 100%; max-width: 900px;
+  display: flex; align-items: center;
+  gap: 1.2rem;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1rem 1.4rem;
 }
 
-#player-hand { bottom: 20px; }
-#opponent-hand { top: 20px; }
-
-#center-pile {
-    display: flex;
-    gap: 50px;
-    align-items: center;
+.menu-avatar-circle {
+  width: 56px; height: 56px;
+  border-radius: 50%;
+  background: var(--panel2);
+  border: 2px solid var(--gold);
+  display: flex; align-items: center; justify-content: center;
+  font-size: 1.8rem;
+  flex-shrink: 0;
 }
 
-#lootbox-list {
-    display: flex;
-    gap: 20px;
-    flex-wrap: wrap;
-    justify-content: center;
+.menu-info { flex: 1; }
+.menu-info h2 { font-size: 1.4rem; color: var(--gold); font-family: 'Bebas Neue', sans-serif; }
+.menu-stats { display: flex; gap: 1.2rem; flex-wrap: wrap; margin-top: 0.2rem; }
+.menu-stat  { font-size: 0.82rem; color: var(--text2); }
+.menu-stat span { color: var(--cyan); font-weight: 700; }
+
+.menu-logo-big {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: clamp(3rem, 10vw, 7rem);
+  background: linear-gradient(135deg, var(--gold) 30%, var(--cyan));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+  letter-spacing: 0.06em;
+  text-align: center;
+  line-height: 1;
+  filter: drop-shadow(0 0 30px rgba(255,215,0,0.25));
+}
+
+.menu-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 1rem;
+  width: 100%; max-width: 900px;
+}
+
+.menu-card {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.4rem 1rem;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0.6rem;
+  cursor: pointer;
+  transition: all 0.2s;
+  text-decoration: none; color: inherit;
+}
+.menu-card:hover {
+  border-color: var(--cyan);
+  box-shadow: 0 0 20px rgba(0,212,255,0.12);
+  transform: translateY(-3px);
+}
+.menu-card .icon { font-size: 2.2rem; }
+.menu-card .label { font-family: 'Bebas Neue', sans-serif; font-size: 1.2rem; color: var(--text2); letter-spacing: 0.05em; }
+
+.menu-play-card {
+  background: linear-gradient(135deg, #1a0030, #2e0060);
+  border-color: var(--purple);
+}
+.menu-play-card:hover { border-color: #d070ff; box-shadow: 0 0 30px rgba(155,89,182,0.3); }
+.menu-play-card .label { color: #d070ff; }
+
+/* ── ──────────────────────── COLLECTION ──────────────────── */
+.screen-inner {
+  padding: 1.2rem 1.5rem;
+  max-width: 1400px;
+  width: 100%;
+  margin: 0 auto;
+  flex: 1;
+}
+
+.screen-header {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 1rem; flex-wrap: wrap;
+}
+.screen-title { font-family: 'Bebas Neue', sans-serif; font-size: 2rem; color: var(--gold); }
+.screen-header-right { margin-left: auto; display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap; }
+
+.filters { display: flex; gap: 0.6rem; flex-wrap: wrap; align-items: center; margin-bottom: 1rem; }
+.filters .input { width: auto; min-width: 120px; }
+.coll-count { color: var(--text3); font-size: 0.85rem; }
+
+.card-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 0.8rem;
+}
+
+/* ── CARD TILE ─────────────────────────────────────────────── */
+.card-tile {
+  --card-bg: #333;
+  --rarity-glow: #888;
+  border-radius: 10px;
+  background: var(--card-bg);
+  border: 2px solid var(--rarity-glow);
+  box-shadow: 0 0 8px var(--rarity-glow), inset 0 0 20px rgba(0,0,0,0.35);
+  cursor: pointer;
+  transition: transform 0.15s, box-shadow 0.15s;
+  display: flex; flex-direction: column;
+  min-height: 130px;
+  position: relative;
+  overflow: hidden;
+  user-select: none;
+}
+.card-tile:hover { transform: scale(1.05); box-shadow: 0 0 18px var(--rarity-glow); }
+
+.card-small { min-height: 110px; }
+
+.card-color-bar {
+  height: 6px;
+  background: var(--card-bg);
+  filter: brightness(1.5);
+}
+
+.card-inner {
+  flex: 1; padding: 0.5rem 0.6rem;
+  display: flex; flex-direction: column; gap: 0.3rem;
+}
+.card-name { font-weight: 700; font-size: 0.78rem; line-height: 1.2; color: rgba(255,255,255,0.95); }
+.card-rarity { font-size: 0.62rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em; }
+.card-effect { font-size: 0.68rem; color: rgba(255,255,255,0.7); line-height: 1.3; flex: 1; }
+
+.rarity-common    { color: var(--r-common); }
+.rarity-uncommon  { color: var(--r-uncommon); }
+.rarity-rare      { color: var(--r-rare); }
+.rarity-epic      { color: var(--r-epic); }
+.rarity-legendary { color: var(--r-legendary); }
+.rarity-mythic    { color: var(--r-mythic); animation: mythicPulse 2s ease-in-out infinite; }
+
+@keyframes mythicPulse {
+  0%, 100% { text-shadow: 0 0 4px var(--r-mythic); }
+  50%       { text-shadow: 0 0 12px var(--r-mythic), 0 0 24px var(--r-mythic); }
+}
+
+.card-unowned { opacity: 0.35; filter: grayscale(0.7); }
+.card-lock { position: absolute; top: 50%; left: 50%; transform: translate(-50%,-50%); font-size: 1.6rem; pointer-events: none; }
+.card-selected { outline: 3px solid var(--cyan); outline-offset: 2px; }
+.card-unplayable { opacity: 0.5; filter: grayscale(0.5); cursor: not-allowed; }
+.card-playable { cursor: pointer; }
+.card-playable:hover { transform: translateY(-8px) scale(1.05); box-shadow: 0 12px 24px rgba(0,0,0,0.5), 0 0 16px var(--rarity-glow); }
+.card-placeholder { border-radius: 10px; border: 2px dashed var(--border); min-height: 110px; display: flex; align-items: center; justify-content: center; color: var(--text3); font-size: 1.5rem; }
+
+/* ── UPGRADE TILE ──────────────────────────────────────────── */
+.upgrade-tile {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.7rem 0.9rem;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+.upgrade-tile:hover { border-color: var(--purple); box-shadow: 0 0 12px rgba(155,89,182,0.2); }
+.upgrade-tile.card-selected { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,212,255,0.25); }
+.upgrade-title { font-weight: 700; font-size: 0.85rem; margin-bottom: 0.3rem; }
+.upgrade-type { font-size: 0.7rem; font-weight: 700; padding: 0.15em 0.5em; border-radius: 4px; display: inline-block; margin-bottom: 0.3rem; }
+.upgrade-type-active { background: #1a4a00; color: #6eff6e; }
+.upgrade-type-auto   { background: #1a0050; color: #a070ff; }
+.upgrade-desc { font-size: 0.72rem; color: var(--text2); line-height: 1.3; }
+.upgrade-placeholder { border: 2px dashed var(--border); border-radius: 10px; padding: 0.8rem; color: var(--text3); font-size: 0.82rem; text-align: center; }
+
+/* ── ─────────────────────────── DECK BUILDER ─────────────── */
+.deck-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1rem;
+  height: calc(100vh - 120px);
+}
+@media (max-width: 768px) { .deck-layout { grid-template-columns: 1fr; } }
+
+.deck-panel {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  display: flex; flex-direction: column;
+  overflow: hidden;
+}
+.deck-panel-header {
+  padding: 0.8rem 1rem;
+  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  font-family: 'Bebas Neue', sans-serif; font-size: 1.3rem; color: var(--cyan);
+}
+.deck-panel-scroll {
+  flex: 1; overflow-y: auto; padding: 0.8rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 0.6rem;
+  align-content: start;
+}
+
+.upgrade-grid { display: flex; flex-direction: column; gap: 0.5rem; }
+
+/* ── ─────────────────────────── SHOP ─────────────────────── */
+.shop-header-info { display: flex; align-items: center; gap: 0.6rem; font-size: 1rem; color: var(--text2); }
+.shop-header-info strong { color: var(--gold); }
+
+.lootbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
 }
 
 .lootbox-card {
-    background: #16213e;
-    padding: 20px;
-    border: 1px solid cyan;
-    text-align: center;
-    cursor: pointer;
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 14px;
+  padding: 1.5rem 1.2rem;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0.6rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+.lootbox-card:hover { border-color: var(--gold); box-shadow: 0 0 20px rgba(255,215,0,0.1); }
+.lootbox-icon { font-size: 2.8rem; }
+.lootbox-name { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--gold); }
+.lootbox-desc { font-size: 0.8rem; color: var(--text2); }
+.lootbox-price { font-weight: 700; font-size: 1rem; color: var(--cyan); }
+
+/* Lootbox reveal */
+#screen-lootbox-open { align-items: center; justify-content: center; flex-direction: column; padding: 2rem; gap: 1.5rem; }
+.lootbox-reveal-title { font-family: 'Bebas Neue', sans-serif; font-size: 3rem; color: var(--gold); }
+#lootbox-reveal {
+  display: flex; flex-wrap: wrap; gap: 1rem;
+  justify-content: center;
+  max-width: 900px;
 }
 
-button {
-    padding: 10px 20px;
-    background: cyan;
-    border: none;
-    font-weight: bold;
-    cursor: pointer;
-    margin-top: 10px;
+@keyframes cardReveal {
+  from { opacity: 0; transform: scale(0.5) rotateY(90deg); }
+  to   { opacity: 1; transform: scale(1) rotateY(0deg); }
 }
+
+/* ── ─────────────────────────── COSMETICS ────────────────── */
+.cosm-tabs { display: flex; gap: 0.5rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.cosm-tab {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.4em 1em;
+  font-size: 0.85rem;
+  cursor: pointer;
+  color: var(--text2);
+  transition: all 0.2s;
+}
+.cosm-tab:hover, .cosm-tab.active { border-color: var(--cyan); color: var(--cyan); }
+
+.cosm-section { display: none; }
+.cosm-section.active { display: grid; grid-template-columns: repeat(auto-fill, minmax(150px, 1fr)); gap: 0.8rem; }
+
+.cosm-diamonds-info { color: var(--text2); font-size: 0.9rem; margin-bottom: 0.8rem; }
+.cosm-diamonds-info strong { color: var(--gold); }
+
+.cosm-item {
+  background: var(--panel);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 1.2rem 0.8rem;
+  display: flex; flex-direction: column;
+  align-items: center; gap: 0.5rem;
+  text-align: center;
+  transition: all 0.2s;
+}
+.cosm-item:hover { border-color: var(--gold); }
+.cosm-item.cosm-equipped { border-color: var(--cyan); box-shadow: 0 0 12px rgba(0,212,255,0.2); }
+.cosm-item.cosm-locked { opacity: 0.75; }
+.cosm-preview { font-size: 2.4rem; }
+.cosm-name { font-size: 0.82rem; color: var(--text2); font-weight: 600; }
+
+/* ── ─────────────────────────── LEADERBOARD ──────────────── */
+.lb-table-wrap { overflow-x: auto; margin-top: 1rem; border-radius: 10px; border: 1px solid var(--border); }
+table.lb-table {
+  width: 100%; border-collapse: collapse;
+  font-size: 0.88rem;
+}
+.lb-table th {
+  background: var(--panel2);
+  padding: 0.7rem 1rem;
+  text-align: left;
+  color: var(--text3);
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.06em;
+  border-bottom: 1px solid var(--border);
+}
+.lb-table td {
+  padding: 0.65rem 1rem;
+  border-bottom: 1px solid var(--border);
+  color: var(--text);
+}
+.lb-table tr:last-child td { border-bottom: none; }
+.lb-table tr:hover td { background: rgba(255,255,255,0.03); }
+.lb-me td { background: rgba(0,212,255,0.06) !important; }
+.you-badge { background: var(--cyan); color: #001; font-size: 0.65rem; font-weight: 700; padding: 0.1em 0.4em; border-radius: 4px; vertical-align: middle; margin-left: 4px; }
+
+/* ── ─────────────────────────── GAME SCREEN ──────────────── */
+#screen-game {
+  display: none;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--bg2);
+}
+#screen-game.active { display: flex; }
+
+.game-topbar {
+  display: flex; align-items: center; gap: 0.7rem;
+  padding: 0.6rem 1rem;
+  background: var(--panel);
+  border-bottom: 1px solid var(--border);
+  flex-shrink: 0; flex-wrap: wrap;
+}
+.game-topbar-title { font-family: 'Bebas Neue', sans-serif; font-size: 1.4rem; color: var(--gold); margin-right: auto; }
+
+.game-field {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  padding: 0.8rem 1rem;
+  gap: 0.8rem;
+}
+
+/* AI zone */
+.ai-zone {
+  display: flex; align-items: center; gap: 0.6rem;
+  flex-wrap: nowrap; overflow-x: auto;
+  padding-bottom: 0.3rem;
+  flex-shrink: 0;
+}
+.ai-label { font-family: 'Bebas Neue', sans-serif; font-size: 1.1rem; color: var(--red); white-space: nowrap; }
+.ai-count-badge {
+  background: var(--red);
+  color: #fff; font-weight: 700; font-size: 0.85rem;
+  padding: 0.2em 0.6em; border-radius: 20px;
+  white-space: nowrap;
+}
+#g-ai-hand { display: flex; gap: 0.25rem; flex-wrap: nowrap; overflow-x: auto; }
+
+.card-back-face {
+  width: 52px; height: 75px;
+  border-radius: 8px;
+  background: linear-gradient(135deg, #1a0040 0%, #0a0020 50%, #1a0040 100%);
+  border: 2px solid #5a0090;
+  flex-shrink: 0;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.5);
+  position: relative;
+  overflow: hidden;
+}
+.card-back-face::after {
+  content: 'U';
+  position: absolute; inset: 0;
+  display: flex; align-items: center; justify-content: center;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1.2rem;
+  color: rgba(255,255,255,0.15);
+}
+
+/* Center zone */
+.center-zone {
+  flex: 1;
+  display: flex; align-items: center; justify-content: center;
+  gap: 2rem; flex-wrap: wrap;
+}
+
+.discard-area, .draw-area {
+  display: flex; flex-direction: column; align-items: center; gap: 0.4rem;
+}
+.pile-label { font-size: 0.7rem; text-transform: uppercase; letter-spacing: 0.08em; color: var(--text3); }
+
+#g-discard .card-tile { min-height: 130px; width: 90px; pointer-events: none; }
+
+.draw-pile-visual {
+  width: 90px; height: 130px;
+  background: linear-gradient(135deg, #1a0040, #0a0020);
+  border: 2px solid #5a0090;
+  border-radius: 10px;
+  display: flex; align-items: center; justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.9rem;
+  flex-direction: column;
+  gap: 0.3rem;
+  color: rgba(255,255,255,0.6);
+  box-shadow: 0 4px 16px rgba(0,0,0,0.5);
+}
+.draw-pile-visual:hover { border-color: var(--cyan); box-shadow: 0 0 16px rgba(0,212,255,0.3); }
+.draw-count { color: var(--cyan); font-size: 1.2rem; font-weight: 700; }
+
+.game-info-col {
+  display: flex; flex-direction: column; gap: 0.5rem; align-items: center;
+}
+.color-indicator {
+  padding: 0.4em 1em;
+  border-radius: 20px;
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 0.9rem;
+  letter-spacing: 0.06em;
+  color: rgba(0,0,0,0.8);
+  min-width: 80px; text-align: center;
+  font-weight: 900;
+  transition: background 0.3s;
+}
+.status-badges { display: flex; flex-wrap: wrap; gap: 0.3rem; justify-content: center; }
+.status-badge { background: var(--panel2); border: 1px solid var(--border); border-radius: 20px; padding: 0.2em 0.6em; font-size: 0.75rem; color: var(--text2); min-height: 1em; }
+
+.turn-indicator {
+  font-family: 'Bebas Neue', sans-serif;
+  font-size: 1rem;
+  letter-spacing: 0.05em;
+}
+
+/* Player hand */
+.player-zone { flex-shrink: 0; }
+.player-zone-header {
+  display: flex; align-items: center; gap: 1rem;
+  margin-bottom: 0.5rem; flex-wrap: wrap;
+}
+.player-hand-label { font-family: 'Bebas Neue', sans-serif; font-size: 1rem; color: var(--green); }
+#g-player-hand {
+  display: flex; gap: 0.35rem; flex-wrap: nowrap;
+  overflow-x: auto; padding-bottom: 0.3rem;
+}
+#g-player-hand .card-tile { min-height: 120px; width: 82px; flex-shrink: 0; }
+
+/* Upgrades bar */
+#g-upgrades { display: flex; gap: 0.5rem; flex-wrap: wrap; }
+
+/* Color picker */
+.color-picker {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.7);
+  display: none; align-items: center; justify-content: center;
+  z-index: 100; gap: 1rem; flex-wrap: wrap;
+}
+.color-picker.active { display: flex; }
+.color-btn {
+  width: 80px; height: 80px; border-radius: 50%;
+  border: 3px solid rgba(255,255,255,0.3);
+  cursor: pointer; font-size: 0.85rem; font-weight: 700;
+  font-family: 'Exo 2', sans-serif;
+  color: rgba(0,0,0,0.7);
+  transition: all 0.2s;
+}
+.color-btn:hover { transform: scale(1.15); border-color: #fff; }
+#pick-red    { background: #c0392b; }
+#pick-green  { background: #27ae60; }
+#pick-blue   { background: #2980b9; }
+#pick-yellow { background: #f39c12; }
+
+/* Game log */
+.game-log-wrap {
+  width: 100%; max-height: 80px;
+  overflow-y: auto;
+  background: rgba(0,0,0,0.3);
+  border-radius: 8px;
+  padding: 0.3rem 0.6rem;
+  flex-shrink: 0;
+}
+.log-line { font-size: 0.72rem; color: var(--text3); padding: 0.08rem 0; }
+.log-line:last-child { color: var(--text2); }
+
+/* End overlay */
+.end-overlay {
+  position: fixed; inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: none; align-items: center; justify-content: center;
+  flex-direction: column; gap: 1.5rem;
+  z-index: 200;
+  backdrop-filter: blur(4px);
+}
+.end-overlay.active { display: flex; }
+#g-end-title { font-family: 'Bebas Neue', sans-serif; font-size: 5rem; letter-spacing: 0.06em; }
+#g-end-sub { font-size: 1.4rem; color: var(--text2); }
+.end-btns { display: flex; gap: 1rem; flex-wrap: wrap; justify-content: center; }
+
+.win-anim #g-end-title { animation: winPop 0.6s cubic-bezier(0.34,1.56,0.64,1) forwards; }
+@keyframes winPop {
+  from { transform: scale(0.3); opacity: 0; }
+  to   { transform: scale(1);   opacity: 1; }
+}
+
+/* ── Toast ─────────────────────────────────────────────────── */
+#toast-container {
+  position: fixed; bottom: 1.5rem; right: 1.5rem;
+  display: flex; flex-direction: column; gap: 0.5rem;
+  z-index: 9999; pointer-events: none;
+}
+.toast {
+  background: var(--panel2);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  padding: 0.7rem 1.1rem;
+  font-size: 0.88rem;
+  color: var(--text);
+  opacity: 0;
+  transform: translateX(30px);
+  transition: all 0.3s;
+  pointer-events: none;
+  max-width: 280px;
+}
+.toast.toast-show { opacity: 1; transform: translateX(0); }
+.toast-success { border-left: 3px solid var(--green); }
+.toast-error   { border-left: 3px solid var(--red); }
+.toast-warn    { border-left: 3px solid var(--gold); }
+.toast-info    { border-left: 3px solid var(--cyan); }
+
+/* ── Scrollbar ─────────────────────────────────────────────── */
+::-webkit-scrollbar { width: 5px; height: 5px; }
+::-webkit-scrollbar-track { background: var(--bg2); }
+::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: var(--text3); }
+
+/* ── Utility ───────────────────────────────────────────────── */
+.empty-msg { color: var(--text3); text-align: center; padding: 2rem; grid-column: 1/-1; }
+.gap { display: flex; gap: 0.5rem; }
+.mt { margin-top: 0.8rem; }
