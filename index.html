@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="de">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cyber-Uno: Origins</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <div id="app">
+        <!-- Login Screen -->
+        <div id="auth-screen" class="screen">
+            <h1>CYBER-UNO</h1>
+            <input type="text" id="username" placeholder="Nutzername">
+            <button onclick="game.login()">Account Erstellen / Login</button>
+        </div>
+
+        <!-- Main Menu -->
+        <div id="main-menu" class="screen hidden">
+            <div class="stats">
+                <span>🏆 <span id="trophies">0</span></span>
+                <span>💎 <span id="diamonds">0</span></span>
+            </div>
+            <nav>
+                <button onclick="game.switchScreen('game-board')">Suchen (Play)</button>
+                <button onclick="game.switchScreen('deck-screen')">Deck & Karten</button>
+                <button onclick="game.switchScreen('shop-screen')">Shop (Lootboxen)</button>
+                <button onclick="game.switchScreen('leaderboard-screen')">Leaderboard</button>
+            </nav>
+        </div>
+
+        <!-- Shop / Lootboxen -->
+        <div id="shop-screen" class="screen hidden">
+            <button class="back-btn" onclick="game.switchScreen('main-menu')">Zurück</button>
+            <h2>Lootbox Shop</h2>
+            <div id="lootbox-list">
+                <!-- Wird per JS gefüllt -->
+            </div>
+        </div>
+
+        <!-- Deck Builder -->
+        <div id="deck-screen" class="screen hidden">
+            <button class="back-btn" onclick="game.switchScreen('main-menu')">Zurück</button>
+            <h2>Dein Deck (<span id="deck-count">0</span>/32)</h2>
+            <div id="collection-grid"></div>
+        </div>
+
+        <!-- Game Board -->
+        <div id="game-board" class="screen hidden">
+            <div id="opponent-hand" class="hand"></div>
+            <div id="center-pile">
+                <div id="discard-pile"></div>
+                <div id="draw-deck" onclick="game.drawCard()">STAPEL</div>
+            </div>
+            <div id="player-upgrades"></div>
+            <div id="player-hand" class="hand"></div>
+            <div id="game-info">Warte auf Gegner...</div>
+        </div>
+
+        <!-- Leaderboard -->
+        <div id="leaderboard-screen" class="screen hidden">
+            <button class="back-btn" onclick="game.switchScreen('main-menu')">Zurück</button>
+            <h2>Top Spieler</h2>
+            <div id="leaderboard-list"></div>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
