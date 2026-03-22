@@ -1,0 +1,103 @@
+:root {
+    --bg: #1a1a2e;
+    --card-red: #e94560;
+    --card-blue: #0f3460;
+    --card-green: #2ecc71;
+    --card-yellow: #f1c40f;
+    --card-black: #000000;
+    --card-grey: #95a5a6;
+}
+
+body {
+    background-color: var(--bg);
+    color: white;
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    overflow: hidden;
+}
+
+.screen {
+    width: 100vw;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    padding: 20px;
+    box-sizing: border-box;
+}
+
+.hidden { display: none !important; }
+
+/* Karten Design */
+.card {
+    width: 80px;
+    height: 120px;
+    border-radius: 8px;
+    border: 2px solid white;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    font-weight: bold;
+    font-size: 24px;
+    margin: 5px;
+    cursor: pointer;
+    position: relative;
+    user-select: none;
+}
+
+.card.red { background: var(--card-red); }
+.card.blue { background: var(--card-blue); }
+.card.green { background: var(--card-green); }
+.card.yellow { background: var(--card-yellow); }
+.card.grey { background: var(--card-grey); }
+.card.black { background: var(--card-black); border-color: gold; }
+
+/* Layouts */
+#collection-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, 100px);
+    gap: 10px;
+    overflow-y: auto;
+    width: 90%;
+}
+
+.hand {
+    display: flex;
+    justify-content: center;
+    position: absolute;
+    width: 100%;
+}
+
+#player-hand { bottom: 20px; }
+#opponent-hand { top: 20px; }
+
+#center-pile {
+    display: flex;
+    gap: 50px;
+    align-items: center;
+}
+
+#lootbox-list {
+    display: flex;
+    gap: 20px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.lootbox-card {
+    background: #16213e;
+    padding: 20px;
+    border: 1px solid cyan;
+    text-align: center;
+    cursor: pointer;
+}
+
+button {
+    padding: 10px 20px;
+    background: cyan;
+    border: none;
+    font-weight: bold;
+    cursor: pointer;
+    margin-top: 10px;
+}
